@@ -20,3 +20,46 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# application-specific
+
+dist/
+build/
+
+nbproject/*
+!nbproject/project.properties
+!nbproject/project.xml
+
+/GoldCoastOnline-ejb/nbproject/private/
+/GoldCoastOnline-ejb/nbproject/ant-deploy.xml
+/GoldCoastOnline-ejb/nbproject/build-impl.xml
+/GoldCoastOnline-ejb/nbproject/genfiles.properties
+/GoldCoastOnline-war/nbproject/private/
+/GoldCoastOnline-war/nbproject/ant-deploy.xml
+/GoldCoastOnline-war/nbproject/build-impl.xml
+/GoldCoastOnline-war/nbproject/genfiles.properties
+/GoldCoastOnline-ejb/setup/glassfish-resources.xml
+/setup/sun-resources.xml
