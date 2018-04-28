@@ -109,8 +109,9 @@ public class ScheduleSessionBean implements ScheduleSessionBeanLocal {
         // to check any conflict for the new schedule 
         LocalDateTime oldStartTime = oldSchedule.getStartTime();
         LocalDateTime oldEndTime = oldSchedule.getEndTime();
-//        oldSchedule.setStartTime(LocalDateTime.MIN);
-//        oldSchedule.setEndTime(LocalDateTime.MIN);
+//      LocalDateTime.MIN cannot be converted into sql.Date (in custom converter)
+        oldSchedule.setStartTime(LocalDateTime.of(1999, 1, 1, 0, 0));
+        oldSchedule.setEndTime(LocalDateTime.of(1999, 1, 1, 0, 0));
         em.merge(oldSchedule);
         newSchedule.setEndTime(newSchedule.getStartTime().plusMinutes(oldSchedule.getMovie().getDuration()));
 //        newSchedule.setHall(hall);

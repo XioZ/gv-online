@@ -146,6 +146,7 @@ public class SchedulesManagedBean implements Serializable {
             selectedSchedule = 
                     scheduleSessionBean.updateSchedule(updateSchedule);
             if (selectedSchedule != null) { // success
+                retrieveDaysAndDailySchedules();
                 RequestContext context = RequestContext.getCurrentInstance();
                 context.execute("PF('view-schedule-dialog').hide();");
             } else {
