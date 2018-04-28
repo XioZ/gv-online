@@ -22,7 +22,7 @@ public interface MovieSessionBeanLocal {
 
     public MovieEntity retrieveMovie(Long id) throws EntityNotFoundException;
 
-    public MovieEntity updateMovie(MovieEntity movie) throws EntityNotFoundException, EntityConflictException;
+    public MovieEntity updateMovie(MovieEntity movie) throws EntityNotFoundException;
 
     public Boolean deleteMovie(Long id) throws EntityNotFoundException;
 

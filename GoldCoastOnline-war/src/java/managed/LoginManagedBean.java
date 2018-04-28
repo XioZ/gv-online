@@ -5,7 +5,6 @@
  */
 package managed;
 
-import static com.sun.xml.ws.spi.db.BindingContextFactory.LOGGER;
 import entity.AdminStaffEntity;
 import entity.OpStaffEntity;
 import exception.EntityNotFoundException;
@@ -13,7 +12,6 @@ import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.ActionEvent;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -77,7 +75,7 @@ public class LoginManagedBean {
                     ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
                     ec.getSessionMap().put("user", op);
                     LOGGER.log(Level.WARNING, "op staff logged in: {0}", op.toString());
-                    ec.redirect(ec.getRequestContextPath() + "/opLanding.xhtml?faces-redirect=true");
+                    ec.redirect(ec.getRequestContextPath() + "/halls.xhtml?faces-redirect=true");
                 }
             }
         } catch (EntityNotFoundException e) {

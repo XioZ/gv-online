@@ -19,8 +19,8 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import session.stateless.CinemaSessionBeanLocal;
@@ -32,7 +32,7 @@ import util.Constants;
  * @author Chuck
  */
 @Named(value = "cinemasManagedBean")
-@SessionScoped
+@ViewScoped
 public class CinemasManagedBean implements Serializable {
 
     private static final Logger LOGGER
@@ -107,7 +107,7 @@ public class CinemasManagedBean implements Serializable {
                 RequestContext context = RequestContext.getCurrentInstance();
                 context.execute("PF('create-movie-dialog').hide();");
             } else {
-                LOGGER.log(Level.SEVERE, "Cinema creation failed!");
+                LOGGER.log(Level.SEVERE, "Cinema update failed!");
             }
         } catch (EntityConflictException e) {
             displayMessage(null, "Please enter a unique cinema name.", null);
@@ -221,6 +221,7 @@ public class CinemasManagedBean implements Serializable {
                 int index = cinemas.indexOf(selectedCinema);
                 cinemas = cinemaSessionBean.retrieveAllCinemas();
                 selectedCinema = cinemas.get(index);
+                LOGGER.log(Level.SEVERE, "selected cinema''s halls: {0}", selectedCinema.getHalls().size());
                 // close the dialog
                 RequestContext context = RequestContext.getCurrentInstance();
                 context.execute("PF('view-hall-dialog').hide();");
@@ -236,7 +237,7 @@ public class CinemasManagedBean implements Serializable {
         selectedHall = selectedCinema.getHalls().get(index);
         RequestContext context = RequestContext.getCurrentInstance();
         context.execute("PF('view-hall-dialog').show();");
-        LOGGER.log(Level.SEVERE, "open view hall dialog: {0}", selectedHall.toString());
+        LOGGER.log(Level.SEVERE, "2. open view hall dialog: {0}", selectedHall.toString());
     }
 
     public void displayMessage(FacesMessage.Severity severity, String msg, String detail) {

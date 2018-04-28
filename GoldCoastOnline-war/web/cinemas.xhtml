@@ -33,9 +33,9 @@
     </ui:define>
 
     <ui:define name="content">
+        <p:messages id="cinema-msg" globalOnly="true"/>
         <h:form id="main-content">
             <!--cinema details-->
-            <p:messages id="cinema-msg" globalOnly="true"/>
             <div class="ui-g" style="background-color: greenyellow; ">
                 <div class="ui-g-3">
                     <h:outputLabel for="cinema-new-name" value="Cinema: " />
@@ -77,6 +77,7 @@
                     varStatus="status">
                     <div class="ui-g-3">
                         <p:commandLink
+                            update="view-hall-detail"
                             action="#{cinemasManagedBean.openViewHallDialog(status.index)}">
                             <h:outputText value="Hall #{hall.number}" />
                         </p:commandLink>
@@ -209,6 +210,7 @@
         </p:dialog>
         <!--VIEW HALL DIALOG-->
         <p:dialog
+            id="view-hall-detail"
             header="Hall Details"
             widgetVar="view-hall-dialog" 
             modal="true"

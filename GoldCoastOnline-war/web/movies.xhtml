@@ -8,11 +8,162 @@
 
     <ui:define name="content">
         <h2>Movies</h2>
-        <div class="ui-g">
-            <div class="ui-g-3">
-                
+        <p:messages id="err-msg" globalOnly="true"/>
+        <h:form id="main-content">
+            <div class="ui-g" style="background-color: greenyellow; margin-top: 30px; ">
+                <div class="ui-g-12" style="background-color: yellow; ">
+                    <p:commandLink 
+                        update="main-content"
+                        onclick="PF('create-movie-dialog').show();">
+                        <h:outputText value="Create Movie" />
+                    </p:commandLink>
+                </div>
+                <!--view all movies-->
+                <ui:repeat
+                    value="#{moviesManagedBean.movies}"
+                    var="movie"
+                    varStatus="status">
+                    <div class="ui-g-3">
+                        <p:commandLink
+                            update="view-movie-detail"
+                            action="#{moviesManagedBean.openViewMovieDialog(status.index)}">
+                            <h:outputText value="#{movie.name} | #{movie.rating}" />
+                        </p:commandLink>
+                    </div>
+                </ui:repeat>
             </div>
-        </div>
+        </h:form> 
+        <!--CREATE MOVIE DIALOG-->
+        <p:dialog
+            header="Create Movie"
+            widgetVar="create-movie-dialog" 
+            modal="true"
+            closable="true">
+            <p:messages id="add-movie-msg" globalOnly="true"/>
+            <h:form>
+                <h:outputLabel for="new-movie-name" value="Name: " />
+                <p:inputText 
+                    id="new-movie-name" 
+                    value="#{moviesManagedBean.newMovie.name}"
+                    required="true"
+                    requiredMessage="Please enter a name for the movie." />
+                <p:message for="new-movie-name"/>
+
+                <h:outputLabel for="new-movie-duration" value="Duration (min): " />
+                <p:inputText 
+                    id="new-movie-duration" 
+                    type="number"
+                    value="#{moviesManagedBean.newMovie.duration}"
+                    required="true"
+                    requiredMessage="Please enter a duration in minutes for the movie." />
+                <p:message for="new-movie-duration"/>
+
+                <p:outputLabel for="new-movie-rating" value="Rating: " />
+                <p:selectOneListbox 
+                    id="new-movie-rating" 
+                    value="#{moviesManagedBean.newMovie.rating}"
+                    required="true"
+                    requiredMessage="Please select a rating for the movie.">
+                    <f:selectItem itemLabel="G" itemValue="G" />
+                    <f:selectItem itemLabel="PG" itemValue="PG" />
+                    <f:selectItem itemLabel="PG13" itemValue="PG13" />
+                    <f:selectItem itemLabel="NC16" itemValue="NC16" />
+                    <f:selectItem itemLabel="M18" itemValue="M18" />
+                    <f:selectItem itemLabel="R21" itemValue="R21" />
+                </p:selectOneListbox>
+                <p:message for="new-movie-rating"/>
+
+                <p:outputLabel 
+                    for="new-movie-image" 
+                    value="Upload images: #{moviesManagedBean.newMovie.images.size()} uploaded"/>
+                <p:fileUpload 
+                    id="new-movie-image" 
+                    required="true" 
+                    requiredMessage="Please upload some images for the movie." 
+                    update="@form"
+                    value="#{moviesManagedBean.movieImage}" 
+                    fileUploadListener="#{moviesManagedBean.uploadMovieImage}"
+                    mode="advanced" 
+                    skinSimple="true"
+                    sizeLimit="10000000" 
+                    allowTypes="/(\.|\/)(gif|jpe?g|png)$/" 
+                    multiple="true" />
+                <p:messages 
+                    for="new-movie-image" 
+                    globalOnly="true" 
+                    id="upload-success" />
+
+                <center>
+                    <p:commandLink 
+                        update="@form main-content add-movie-msg" 
+                        action="#{moviesManagedBean.addMovie}">
+                        <h:outputText value="Add New Movie" />
+                    </p:commandLink>
+                </center>
+            </h:form>
+        </p:dialog>
+        <!--VIEW MOVIE DIALOG-->
+        <p:dialog
+            id="view-movie-detail"
+            header="Movie Details"
+            widgetVar="view-movie-dialog" 
+            modal="true"
+            closable="true">
+            <p:messages id="view-movie-msg" globalOnly="true"/>
+            <h:form>
+                <h3>#{moviesManagedBean.selectedMovie.name}</h3>
+
+                <h:outputLabel for="movie-duration" value="Duration (min): " />
+                <p:inputText 
+                    id="movie-duration" 
+                    type="number"
+                    value="#{moviesManagedBean.selectedMovie.duration}"
+                    required="true"
+                    requiredMessage="Please enter a duration in minutes for the movie." />
+                <p:message for="movie-duration"/>
+
+                <p:outputLabel for="movie-rating" value="Rating: " />
+                <p:selectOneListbox 
+                    id="movie-rating" 
+                    value="#{moviesManagedBean.selectedMovie.rating}"
+                    required="true"
+                    requiredMessage="Please select a rating for the movie.">
+                    <f:selectItem itemLabel="G" itemValue="G" />
+                    <f:selectItem itemLabel="PG" itemValue="PG" />
+                    <f:selectItem itemLabel="PG13" itemValue="PG13" />
+                    <f:selectItem itemLabel="NC16" itemValue="NC16" />
+                    <f:selectItem itemLabel="M18" itemValue="M18" />
+                    <f:selectItem itemLabel="R21" itemValue="R21" />
+                </p:selectOneListbox>
+                <p:message for="movie-rating"/>
+
+                <p:galleria 
+                    value="#{moviesManagedBean.selectedMovie.images}" 
+                    var="image" 
+                    panelWidth="200" 
+                    panelHeight="113"
+                    showCaption="false">
+                    <p:graphicImage 
+                        value="http://localhost:8080/#{image}"
+                        alt="Movie Image: #{image}"
+                        style="width: 100%; "/>
+                </p:galleria>
+
+                <center>
+                    <p:commandLink 
+                        update="@form main-content err-msg" 
+                        action="#{moviesManagedBean.updateMovie}">
+                        <h:outputText value="Save Changes" />
+                    </p:commandLink>
+                    <p:commandLink 
+                        style="margin-left: 15px; "
+                        update="@form main-content err-msg" 
+                        action="#{moviesManagedBean.deleteMovie}">
+                        <h:outputText value="Delete" />
+                    </p:commandLink>
+                </center>
+            </h:form>
+        </p:dialog>
     </ui:define>
 
 </ui:composition>

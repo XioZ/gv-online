@@ -5,7 +5,6 @@
  */
 package session.stateless;
 
-import entity.CinemaEntity;
 import entity.MovieEntity;
 import exception.EntityConflictException;
 import exception.EntityNotFoundException;
@@ -34,14 +33,15 @@ public class MovieSessionBean implements MovieSessionBeanLocal {
         if (movie == null
                 || movie.getName() == null || movie.getName().isEmpty()
                 || movie.getRating() == null || movie.getRating().isEmpty()
-                || movie.getDuration() == 0) {
+                || movie.getDuration() == 0 || movie.getImages() == null || movie.getImages().size() < 1) {
             return null;
         }
 
         // check if name already exists
         if (this.isMovieNameUnique(movie.getName())) { // name satisfies unique constraint
-            MovieEntity newMovie 
+            MovieEntity newMovie
                     = new MovieEntity(movie.getName(), movie.getRating(), movie.getDuration());
+            newMovie.setImages(movie.getImages());
             em.persist(newMovie);
             return newMovie;
         }
@@ -59,9 +59,8 @@ public class MovieSessionBean implements MovieSessionBeanLocal {
     // TODO: change of movie images?
     @Override
     public MovieEntity updateMovie(MovieEntity movie)
-            throws EntityNotFoundException, EntityConflictException {
+            throws EntityNotFoundException {
         if (movie == null
-                || movie.getName() == null || movie.getName().isEmpty()
                 || movie.getRating() == null || movie.getRating().isEmpty()
                 || movie.getDuration() == 0) {
             return null;
@@ -69,28 +68,23 @@ public class MovieSessionBean implements MovieSessionBeanLocal {
 
         // check if cinema w such ID exists
         MovieEntity persistedMovie = this.retrieveMovie(movie.getId());
-        if (this.isMovieNameUnique(movie.getName())) { // name unique, okay to update
-            persistedMovie.setName(movie.getName());
-            persistedMovie.setRating(movie.getRating());
-            persistedMovie.setDuration(movie.getDuration());
-            
-            em.merge(persistedMovie);
-            return persistedMovie;
-        } else {
-            throw new EntityConflictException("Movie named " + movie.getName() + " already exists!");
-        }
+        persistedMovie.setRating(movie.getRating());
+        persistedMovie.setDuration(movie.getDuration());
+
+        em.merge(persistedMovie);
+        return persistedMovie;
     }
-    
+
     // view all movies
     @Override
     public List<MovieEntity> retrieveAllMovies() {
         Query q = em.createQuery("SELECT m FROM MovieEntity m ");
         return q.getResultList();
     }
-    
+
     // view movie details
     @Override
-    public MovieEntity retrieveMovie(Long id) 
+    public MovieEntity retrieveMovie(Long id)
             throws EntityNotFoundException {
         if (id == null) {
             return null;
@@ -103,12 +97,14 @@ public class MovieSessionBean implements MovieSessionBeanLocal {
             return movie;
         }
     }
-    
+
     // delete movie
     @Override
-    public Boolean deleteMovie(Long id) 
+    public Boolean deleteMovie(Long id)
             throws EntityNotFoundException {
-        if (id == null) return false;
+        if (id == null) {
+            return false;
+        }
 
         MovieEntity movie = this.retrieveMovie(id); // throws exception if id not found in db
 

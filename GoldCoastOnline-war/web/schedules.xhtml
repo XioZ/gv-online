@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/schedulingManagement.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h2>Schedules</h2>
+        <p:commandLink 
+            onclick="PF('create-schedule-dialog').show();">
+            <h:outputText value="Add Schedule" />
+        </p:commandLink>
+        <h:form id="main-content">
+            <p:messages id="err-msg" globalOnly="true"/>
+            <div class="ui-g" style="background-color: greenyellow; ">
+                <!--display schedules of a hall by day-->
+                <ui:repeat
+                    value="#{schedulesManagedBean.days}"
+                    var="day"
+                    varStatus="dayStatus">
+                    <div class="ui-g-12" style="background-color: yellow; ">
+                        <h:outputText value="#{day}" />
+                    </div>
+                    <ui:repeat
+                        value="#{schedulesManagedBean.dailySchedules.get(dayStatus.index)}"
+                        var="schedule">
+                        <div class="ui-g-4">
+                            <p:commandLink
+                                update="view-schedule-detail"
+                                action="#{schedulesManagedBean.viewSchedule(schedule)}">
+                                <h:outputText value="From #{schedule.startTime} To #{schedule.endTime}" />
+                            </p:commandLink>                        
+                        </div>
+                    </ui:repeat>
+                    <p:separator />
+                </ui:repeat>
+            </div>
+        </h:form>
+        <!--CREATE SCHEDULE FOR HALL DIALOG-->
+        <p:dialog
+            id="create-schedule-dialog"
+            header="Add Schedule For #{schedulesManagedBean.hall.number}"
+            widgetVar="create-schedule-dialog" 
+            modal="true"
+            closable="true">
+            <h:form>
+                <p:messages id="add-schedule-msg" globalOnly="true"/>
+                <h:outputLabel for="new-schedule-day" value="Day:  " />
+                <p:calendar
+                    id="new-schedule-day" 
+                    value="#{schedulesManagedBean.newScheduleDay}"
+                    required="true"
+                    requiredMessage="Please select a day for the new schedule." />
+                <p:message for="new-schedule-day"/>
+
+                <h:outputLabel for="new-schedule-start" value="Start time:  " />
+                <p:calendar
+                    id="new-schedule-start" 
+                    value="#{schedulesManagedBean.newScheduleStart}"
+                    pattern="HH:mm" timeOnly="true"
+                    required="true"
+                    requiredMessage="Please select a start time for the new schedule." />
+                <p:message for="new-schedule-start"/>
+
+                <h:outputLabel for="new-schedule-movie" value="Movie:  " />
+                <p:selectOneMenu 
+                    id="new-schedule-movie" 
+                    converter="movieConverter" 
+                    value="#{schedulesManagedBean.newScheduleMovie}" 
+                    required="true" 
+                    requiredMessage="lease indicate a movie for the new schedule.">
+                    <f:selectItem 
+                        itemLabel="Please Select" 
+                        itemValue="" 
+                        noSelectionOption="true"/>
+                    <f:selectItems 
+                        value="#{schedulesManagedBean.movies}" 
+                        var="movie" 
+                        itemLabel="#{movie.name}" 
+                        itemValue="#{movie}"/>
+                </p:selectOneMenu>
+                <p:message for="new-schedule-movie"/>
+
+                <h:outputLabel
+                    value="End time: determined by movie length and start time."/>
+
+                <center>
+                    <p:commandLink 
+                        update="@form main-content" 
+                        action="#{schedulesManagedBean.addSchedule}">
+                        <h:outputText value="Add New Schedule" />
+                    </p:commandLink>
+                </center>
+            </h:form>
+        </p:dialog>
+        <!--VIEW SCHEDULE DIALOG-->
+        <p:dialog
+            id="view-schedule-detail"
+            header="Schedule Details"
+            widgetVar="view-schedule-dialog" 
+            modal="true"
+            closable="true">
+            <h:form>
+                <p:messages id="view-schedule-msg" globalOnly="true"/>
+                <div class="ui-g">
+                    <div class="ui-g-6">
+                        <h:outputLabel 
+                            style="margin-bottom: 10px; "
+                            value="Start time: #{schedulesManagedBean.selectedSchedule.startTime}"/>
+                        <br/>
+                        <h:outputLabel 
+                            style="margin-bottom: 10px; "
+                            value="End time: #{schedulesManagedBean.selectedSchedule.endTime}"/>
+                        <br/>
+                        <h:outputLabel 
+                            style="margin-bottom: 10px; "
+                            value="Cinema: #{schedulesManagedBean.selectedSchedule.hall.cinema.name}"/>
+                        <br/>
+                        <h:outputLabel 
+                            style="margin-bottom: 10px; "
+                            value="Hall #{schedulesManagedBean.selectedSchedule.hall.number}"/>
+                        <br/>
+                        <h:outputLabel 
+                            style="margin-bottom: 10px; "
+                            value="Movie: #{schedulesManagedBean.selectedSchedule.movie.name}"/>
+                    </div>
+                    <div class="ui-g-6">
+                        <!--UPDATE SCHEDULE--> 
+                        <h4>Change schedule</h4>
+                        <h6>Movie and Hall cannot be updated after creation. To do so, delete and create a new one instead.</h6>
+                        <h:outputLabel for="new-schedule-day" value="Day:  " />
+                        <p:calendar
+                            id="new-schedule-day" 
+                            value="#{schedulesManagedBean.newScheduleDay}"
+                            required="true"
+                            requiredMessage="Please select a day for the new schedule." />
+                        <p:message for="new-schedule-day"/>
+
+                        <h:outputLabel for="new-schedule-start" value="Start time:  " />
+                        <p:calendar
+                            id="new-schedule-start" 
+                            value="#{schedulesManagedBean.newScheduleStart}"
+                            pattern="HH:mm" timeOnly="true"
+                            required="true"
+                            requiredMessage="Please select a start time for the new schedule." />
+                        <p:message for="new-schedule-start"/>
+
+                        <h:outputLabel
+                            value="End time: determined by movie length and start time."/>
+                    </div>
+                </div>
+                <center>
+                    <p:commandLink 
+                        update="@form main-content" 
+                        action="#{schedulesManagedBean.updateSchedule}">
+                        <h:outputText value="Save Changes" />
+                    </p:commandLink>
+                    <p:commandLink 
+                        style="margin-left: 15px; "
+                        update="@form main-content" 
+                        action="#{schedulesManagedBean.deleteSchedule}">
+                        <h:outputText value="Delete" />
+                    </p:commandLink>
+                </center>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

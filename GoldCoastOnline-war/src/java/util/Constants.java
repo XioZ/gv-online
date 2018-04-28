@@ -14,4 +14,5 @@ public class Constants {
     public static final String NORMAL = "NORMAL";
     public static final String EMPTY = "EMPTY"; // not available for sale
     public static final String HANDICAP = "HANDICAP";
+
 }

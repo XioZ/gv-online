@@ -49,6 +49,7 @@ public class ScheduleSessionBean implements ScheduleSessionBeanLocal {
         HallEntity hall = hallSessionBean.retrieveHall(hallId);
         // ensure end time is correct according to start time and movie duration
         schedule.setEndTime(schedule.getStartTime().plusMinutes(movie.getDuration()));
+        schedule.setHall(hall);
         // check new screening schedule is not in conflict w existing ones
         if (this.hasScheduleConflict(schedule)) {
             throw new EntityConflictException("Schedule conflict!");
@@ -66,16 +67,20 @@ public class ScheduleSessionBean implements ScheduleSessionBeanLocal {
         return newSchedule;
     }
 
+    // IMPORTANT: schedule must have hall set
     private Boolean hasScheduleConflict(ScheduleEntity schedule) {
-        if (schedule == null || schedule.getStartTime() == null || schedule.getEndTime() == null) {
+        if (schedule == null || schedule.getHall() == null
+                || schedule.getStartTime() == null || schedule.getEndTime() == null) {
             return true;
         }
         // find conflict schedules w overlap into movie itself or buffer
         Query q = em.createQuery("SELECT s from ScheduleEntity s "
-                + "WHERE (s.endTime > :startTime "
+                + "WHERE s.hall.id = :hall "
+                + "AND ((s.endTime > :startTime "
                 + "AND s.endTime < :endTime) "
                 + "OR (s.startTime < :endTime "
-                + "AND s.startTime > :startTime) ")
+                + "AND s.startTime > :startTime)) ")
+                .setParameter("hall", schedule.getHall().getId())
                 .setParameter("startTime", schedule.getStartTime().minusMinutes(15))
                 .setParameter("endTime", schedule.getEndTime().plusMinutes(15));
         return !q.getResultList().isEmpty();
@@ -106,6 +111,7 @@ public class ScheduleSessionBean implements ScheduleSessionBeanLocal {
         LocalDateTime oldEndTime = oldSchedule.getEndTime();
         oldSchedule.setStartTime(LocalDateTime.MIN);
         oldSchedule.setEndTime(LocalDateTime.MIN);
+        em.merge(oldSchedule);
         newSchedule.setEndTime(newSchedule.getStartTime().plusMinutes(oldSchedule.getMovie().getDuration()));
         if (this.hasScheduleConflict(newSchedule)) {
             // new schedule conflicts w existing other schedules
@@ -169,13 +175,15 @@ public class ScheduleSessionBean implements ScheduleSessionBeanLocal {
         if (hallId == null || day == null) return null;
         
         HallEntity hall = hallSessionBean.retrieveHall(hallId);
-        List<ScheduleEntity> dailySchedule = new ArrayList<>();
-        for (ScheduleEntity schedule: hall.getSchedules()) {
-            if (day.equals(schedule.getDay())) {
-                dailySchedule.add(schedule);
-            }
-        }
-        return dailySchedule;
+
+        Query q = em.createQuery("SELECT s "
+                + "FROM ScheduleEntity s "
+                + "WHERE s.hall.id = :hall "
+                + "AND s.day = :day "
+                + "ORDER BY s.startTime ASC ")
+                .setParameter("hall", hall.getId())
+                .setParameter("day", day);
+        return q.getResultList();
     }
 
     // delete schedule
@@ -191,6 +199,8 @@ public class ScheduleSessionBean implements ScheduleSessionBeanLocal {
         // start time after NOW: no associated tickets sold, okay to delete
         if (schedule.getStartTime().isBefore(LocalDateTime.now())
                 || schedule.getTickets().isEmpty()) {
+            schedule.getMovie().getSchedules().remove(schedule);
+            schedule.getHall().getSchedules().remove(schedule);
             em.remove(schedule);
             em.flush();
             return true;

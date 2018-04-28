@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/schedulingManagement.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <h2>Halls</h2>
+        <h:form id="main-content">
+            <p:messages id="err-msg" globalOnly="true"/>
+            <div class="ui-g" style="background-color: greenyellow; ">
+                <!--display halls by cinema-->
+                <ui:repeat
+                    value="#{hallsManagedBean.cinemas}"
+                    var="cinema"
+                    varStatus="cinemaStatus">
+                    <div class="ui-g-12" style="background-color: yellow; ">
+                        <h:outputText value="Cinema: #{cinema.name}" />
+                    </div>
+                    <ui:repeat
+                        value="#{cinema.halls}"
+                        var="hall"
+                        varStatus="hallStatus">
+                        <div class="ui-g-3">
+                            <p:commandLink
+                                action="#{hallsManagedBean.viewSchedules(hall)}">
+                                <h:outputText value="Hall #{hall.number}" />
+                            </p:commandLink>                        
+                        </div>
+                    </ui:repeat>
+                    <p:separator />
+                </ui:repeat>
+            </div>
+        </h:form> 
+    </ui:define>
+
+</ui:composition>

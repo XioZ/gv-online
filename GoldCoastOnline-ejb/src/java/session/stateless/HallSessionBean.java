@@ -8,7 +8,6 @@ package session.stateless;
 import entity.CinemaEntity;
 import entity.HallEntity;
 import exception.EntityNotFoundException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.ejb.EJB;
@@ -82,9 +81,10 @@ public class HallSessionBean implements HallSessionBeanLocal {
         // check if this hall has any active screening schedule
         Query q = em.createNamedQuery("ScheduleEntity.findSchedulesByHallAfter")
                 .setParameter("hall", hall.getId())
-                .setParameter("startTime", Timestamp.valueOf(LocalDateTime.now()));
+                .setParameter("startTime", (LocalDateTime.now()));
         if (q.getResultList().isEmpty()) { 
             // no screening schedules later than NOW, okay to remove hall
+            hall.getCinema().getHalls().remove(hall);
             em.remove(hall);
             em.flush();
             return true;
