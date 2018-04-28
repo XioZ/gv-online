@@ -109,10 +109,11 @@ public class ScheduleSessionBean implements ScheduleSessionBeanLocal {
         // to check any conflict for the new schedule 
         LocalDateTime oldStartTime = oldSchedule.getStartTime();
         LocalDateTime oldEndTime = oldSchedule.getEndTime();
-        oldSchedule.setStartTime(LocalDateTime.MIN);
-        oldSchedule.setEndTime(LocalDateTime.MIN);
+//        oldSchedule.setStartTime(LocalDateTime.MIN);
+//        oldSchedule.setEndTime(LocalDateTime.MIN);
         em.merge(oldSchedule);
         newSchedule.setEndTime(newSchedule.getStartTime().plusMinutes(oldSchedule.getMovie().getDuration()));
+//        newSchedule.setHall(hall);
         if (this.hasScheduleConflict(newSchedule)) {
             // new schedule conflicts w existing other schedules
             // reverse old schedule's time and abort

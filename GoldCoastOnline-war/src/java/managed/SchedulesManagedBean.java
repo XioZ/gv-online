@@ -141,8 +141,10 @@ public class SchedulesManagedBean implements Serializable {
         ScheduleEntity updateSchedule
                 = new ScheduleEntity(start, LocalDateTime.now());
         updateSchedule.setId(selectedSchedule.getId());
+        updateSchedule.setHall(selectedSchedule.getHall());
         try {
-            selectedSchedule = scheduleSessionBean.updateSchedule(updateSchedule);
+            selectedSchedule = 
+                    scheduleSessionBean.updateSchedule(updateSchedule);
             if (selectedSchedule != null) { // success
                 RequestContext context = RequestContext.getCurrentInstance();
                 context.execute("PF('view-schedule-dialog').hide();");
