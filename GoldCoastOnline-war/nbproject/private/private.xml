@@ -3,9 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/Chuck/NetBeansProjects/GoldCoastOnline/GoldCoastOnline-war/src/java/managed/NewJSFManagedBean.java</file>
+            <file>file:/Users/Chuck/NetBeansProjects/GoldCoastOnline/GoldCoastOnline-war/src/java/util/Constants.java</file>
             <file>file:/Users/Chuck/NetBeansProjects/GoldCoastOnline/GoldCoastOnline-war/web/index.xhtml</file>
-            <file>file:/Users/Chuck/NetBeansProjects/GoldCoastOnline/GoldCoastOnline-war/web/WEB-INF/web.xml</file>
+            <file>file:/Users/Chuck/NetBeansProjects/GoldCoastOnline/GoldCoastOnline-war/web/movies.xhtml</file>
+            <file>file:/Users/Chuck/NetBeansProjects/GoldCoastOnline/GoldCoastOnline-war/web/opLanding.xhtml</file>
+            <file>file:/Users/Chuck/NetBeansProjects/GoldCoastOnline/GoldCoastOnline-war/web/cinemas.xhtml</file>
         </group>
     </open-files>
 </project-private>

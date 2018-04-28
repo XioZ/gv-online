@@ -74,7 +74,7 @@ public class HallSessionBean implements HallSessionBeanLocal {
     public Boolean deleteHall(Long id)
             throws EntityNotFoundException {
         if (id == null) {
-            return null;
+            return false;
         }
 
         HallEntity hall = this.retrieveHall(id); // throw exception if id not found in db

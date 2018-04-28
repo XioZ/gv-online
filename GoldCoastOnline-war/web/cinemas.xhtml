@@ -1,0 +1,246 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/dataManagement.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="left">
+        <h4>Cinemas</h4>
+        <div class="ui-g">
+            <h:form id="side-menu">
+                <ui:repeat
+                    value="#{cinemasManagedBean.cinemas}"
+                    var="cinema" 
+                    varStatus="status">
+                    <div class="ui-g-12">
+                        <p:commandLink 
+                            update="main-content" 
+                            action="#{cinemasManagedBean.onCinemaClicked(status.index)}">
+                            <h:outputText value="#{cinema.name}" />
+                        </p:commandLink>
+                        <p:separator />
+                    </div>
+                </ui:repeat>
+                <p:commandLink 
+                    update="@form"
+                    onclick="PF('create-movie-dialog').show();">
+                    <h:outputText value="Create Cinema" />
+                </p:commandLink>
+            </h:form>
+        </div>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="main-content">
+            <!--cinema details-->
+            <p:messages id="cinema-msg" globalOnly="true"/>
+            <div class="ui-g" style="background-color: greenyellow; ">
+                <div class="ui-g-3">
+                    <h:outputLabel for="cinema-new-name" value="Cinema: " />
+                    <p:inputText 
+                        id="cinema-new-name"
+                        placeholder="Enter a name..."  
+                        value="#{cinemasManagedBean.selectedCinema.name}"
+                        required="true"
+                        requiredMessage="Please enter a name for the cinema." />
+                    <p:message for="cinema-new-name"/>
+                </div>
+                <div class="ui-g-4">
+                    <p:commandLink 
+                        update="side-menu cinema-msg main-content" 
+                        action="#{cinemasManagedBean.updateCinema}">
+                        <h:outputText value="Save Change" />
+                    </p:commandLink>
+                    <p:commandLink 
+                        style="margin-left: 20px; "
+                        update="side-menu cinema-msg main-content" 
+                        action="#{cinemasManagedBean.deleteCinema}">
+                        <h:outputText value="Delete" />
+                    </p:commandLink>
+                </div>
+            </div>
+            <!--halls of a cinema-->
+            <p:messages id="hall-msg" globalOnly="true"/>
+            <div class="ui-g" style="background-color: yellow; margin-top: 30px; ">
+                <div class="ui-g-12">
+                    <p:commandLink 
+                        update="main-content"
+                        onclick="PF('create-hall-dialog').show();">
+                        <h:outputText value="Add Hall" />
+                    </p:commandLink>
+                </div>
+                <ui:repeat
+                    value="#{cinemasManagedBean.selectedCinema.halls}"
+                    var="hall"
+                    varStatus="status">
+                    <div class="ui-g-3">
+                        <p:commandLink
+                            action="#{cinemasManagedBean.openViewHallDialog(status.index)}">
+                            <h:outputText value="Hall #{hall.number}" />
+                        </p:commandLink>
+                    </div>
+                </ui:repeat>
+            </div>
+        </h:form>
+        <!--CREATE CINEMA DIALOG-->
+        <p:dialog
+            header="Create Cinema"
+            widgetVar="create-movie-dialog" 
+            modal="true"
+            closable="true">
+            <p:messages id="add-cinema-msg" globalOnly="true"/>
+            <h:form>
+                <h:outputLabel for="new-cinema-name" value="Cinema name: " />
+                <p:inputText 
+                    id="new-cinema-name" 
+                    value="#{cinemasManagedBean.cinemaName}"
+                    placeholder="Enter a name..."
+                    required="true"
+                    requiredMessage="Please enter a name for the cinema." />
+                <p:message for="new-cinema-name"/>
+                <p:commandLink
+                    update="side-menu add-cinema-msg" 
+                    action="#{cinemasManagedBean.createCinema}">
+                    <h:outputText value="Confirm and Save" />
+                </p:commandLink>
+            </h:form>
+        </p:dialog>
+        <!--CREATE HALL DIALOG-->
+        <p:dialog
+            header="Add Hall"
+            widgetVar="create-hall-dialog" 
+            modal="true"
+            closable="true">
+            <h3>Specify a seating plan</h3>
+            <h:form>
+                <p:messages id="add-hall-msg" globalOnly="true"/>
+                <!--specify seating layout-->
+                <h:outputLabel for="new-hall-rows" value="Num of Rows: " />
+                <p:inputText 
+                    id="new-hall-rows" 
+                    value="#{cinemasManagedBean.numOfRows}"
+                    placeholder="Enter a value larger than 0..."
+                    required="true"
+                    requiredMessage="Please enter a value." />
+                <p:message for="new-hall-rows"/>
+                <h:outputLabel for="new-hall-cols" value="Num of Columns: " />
+                <p:inputText 
+                    id="new-hall-cols" 
+                    value="#{cinemasManagedBean.numOfCols}"
+                    placeholder="Enter a value larger than 0..."
+                    required="true"
+                    requiredMessage="Please enter a value." />
+                <p:message for="new-hall-cols"/>
+                <p:separator />
+                <!--specify handicapped seats-->
+                <h:outputLabel value="Handicapped seats: " style="font-weight: bold; " />
+                <h:outputLabel value="#{cinemasManagedBean.handicapSeats}" style="font-weight: bold; " />
+                <br style="margin-bottom: 10px; "/>
+                <h:outputLabel for="handicap-row" value="Row: " />
+                <p:inputText 
+                    id="handicap-row" 
+                    value="#{cinemasManagedBean.handicapRow}"
+                    placeholder="Enter a value larger than 0..."
+                    required="true"
+                    requiredMessage="Please enter a value." />
+                <p:message for="handicap-row"/>
+                <h:outputLabel for="handicap-col" value="Column: " />
+                <p:inputText 
+                    id="handicap-col" 
+                    value="#{cinemasManagedBean.handicapCol}"
+                    placeholder="Enter a value larger than 0..."
+                    required="true"
+                    requiredMessage="Please enter a value." />
+                <p:message for="handicap-col"/>
+                <p:commandLink 
+                    update="@form" 
+                    action="#{cinemasManagedBean.addSpecialSeat('H')}">
+                    <h:outputText value="Add" />
+                </p:commandLink>
+                <p:commandLink 
+                    style="margin-left: 20px; "
+                    update="@form" 
+                    action="#{cinemasManagedBean.clearSpecialSeat('H')}">
+                    <h:outputText value="Clear" />
+                </p:commandLink>
+                <p:separator />
+                <!--specify empty seats-->
+                <h:outputLabel value="Empty seats: " style="font-weight: bold; " />
+                <h:outputLabel value="#{cinemasManagedBean.emptySeats}" style="font-weight: bold; "/>
+                <br style="margin-bottom: 10px; "/>
+                <h:outputLabel for="empty-row" value="Row: " />
+                <p:inputText 
+                    id="empty-row" 
+                    value="#{cinemasManagedBean.emptyRow}"
+                    placeholder="Enter a value larger than 0..."
+                    required="true"
+                    requiredMessage="Please enter a value." />
+                <p:message for="empty-row"/>
+                <h:outputLabel for="empty-col" value="Column: " />
+                <p:inputText 
+                    id="empty-col" 
+                    value="#{cinemasManagedBean.emptyCol}"
+                    placeholder="Enter a value larger than 0..."
+                    required="true"
+                    requiredMessage="Please enter a value." />
+                <p:message for="empty-col"/>
+                <p:commandLink 
+                    update="@form" 
+                    action="#{cinemasManagedBean.addSpecialSeat('E')}">
+                    <h:outputText value="Add" />
+                </p:commandLink>
+                <p:commandLink 
+                    style="margin-left: 20px; "
+                    update="@form" 
+                    action="#{cinemasManagedBean.clearSpecialSeat('E')}">
+                    <h:outputText value="Clear" />
+                </p:commandLink>
+                <center>
+                    <p:commandLink
+                        style="margin-top: 20px; "
+                        update="side-menu main-content add-hall-msg"
+                        action="#{cinemasManagedBean.createHall()}">
+                        <h:outputText value="Add New Hall" />
+                    </p:commandLink>
+                </center>
+            </h:form>
+        </p:dialog>
+        <!--VIEW HALL DIALOG-->
+        <p:dialog
+            header="Hall Details"
+            widgetVar="view-hall-dialog" 
+            modal="true"
+            closable="true">
+            <p:messages id="view-hall-msg" globalOnly="true"/>
+            <h:form>
+                <h3>Hall #{cinemasManagedBean.selectedHall.number}</h3>
+                <h:outputLabel value="#{cinemasManagedBean.selectedHall.numOfRows} Rows and #{cinemasManagedBean.selectedHall.numOfColumns} Columns" />
+                <!--update of hall's seating plan not implemented (affects sold tickets)-->
+                <!--display current seating plan-->
+                <ui:repeat
+                    value="#{cinemasManagedBean.selectedHall.seatingPlan}"
+                    var="row"
+                    varStatus="rowStatus">
+                    <div>
+                        <ui:repeat
+                            value="#{row}"
+                            var="seat"
+                            varStatus="seatStatus">
+                            <h:outputLabel value="| #{seat} |"/>
+                        </ui:repeat>
+                    </div>
+                </ui:repeat>
+                <center>
+                    <p:commandLink 
+                        update="side-menu main-content view-hall-msg" 
+                        action="#{cinemasManagedBean.deleteHall}">
+                        <h:outputText value="Delete Hall" />
+                    </p:commandLink>
+                </center>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

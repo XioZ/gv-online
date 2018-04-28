@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -39,8 +40,7 @@ public class HallEntity implements Serializable {
     private Integer numOfRows = 0; // range from A to Z
     private Integer numOfColumns = 0; // range from 1 to N
     // stores status of each seat: 'NORMAL', 'EMPTY' or 'HANDICAPPED'
-    // row[0] specifies screen position (FROM .. TO ..)
-    // row[1] onwards: [1][0] corresponds to seat A1
+    // seat[0][0] corresponds to seat A1
     private String[][] seatingPlan;
 
     @XmlTransient
@@ -144,7 +144,8 @@ public class HallEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.HallEntity[ id=" + id + " ]";
+        return "HallEntity{" + "id=" + id + ", number=" + number + ", numOfRows=" + numOfRows + ", numOfColumns=" + numOfColumns + ", seatingPlan=" + Arrays.toString(seatingPlan) + '}';
     }
+
 
 }
